@@ -1,0 +1,41 @@
+database:
+  enabled: true
+  host: '127.0.0.1'
+  port: 3306
+  database: 'market'
+  user: 'market'
+  password: 'market'
+
+messages:
+  noPermission: '&cНет доступа к команде.'
+  usage: 'Продать предмет: /market sell <price>'
+
+  noItem: '&cУ вас нет предмета в руке.'
+  noMoney: '&cУ вас недостаточно денег. Необходимая сумма: {sum}'
+  noOrder: '&cОрдер #{id} не найден.'
+  invalidPrice: '&cНеправильное значение цены.'
+
+
+  buyOrderCreated: 'Вы запросили покупку предмета {item} x{amount} по цене {price}. Сумма: {sum}'
+  sellOrderCreated: 'Вы выставили на продажу предмет {item} x{amount} по цене {price}.'
+
+  buyOrderRemoved:
+    - '&8----------------'
+    - '&7Завершен ордер #{id} на покупку &f{item} &ax{amount}&7 по цене &6{price}.'
+    - '&7Сумма: &f{sum}'
+    - '&7Исполнен: &a{closed}&7/&f{amount} &8(&3{percent}%&8)'
+    - '&7Возврат: &6{money}'
+    - '&8----------------'
+  sellOrderRemoved:
+    - '&8----------------'
+    - '&7Завершен ордер #{id} на продажу &f{item} &ax{amount}&7 по цене &6{price}.'
+    - '&7Сумма: &f{sum}'
+    - '&7Исполнен: &a{closed}&7/&f{amount} &8(&3{percent}%&8)'
+    - '&7Получено: &6{money}'
+    - '&8----------------'
+
+  buyOrderClosed: 'Исполнен ордер на покупку {item} x{amount} по цене {price}. Сумма: {sum}'
+  buyOrderClosedPartially: 'Частично исполнен ({closed}/{amount}) ордер на покупку {item} x{amount} по цене {price}. Сумма: {sum}.'
+
+  sellOrderClosed: 'Исполнен ордер на продажу {item} x{amount} по цене {price}. Сумма: {sum}'
+  sellOrderClosedPartially: 'Частично исполнен ({closed}/{amount}) ордер на продажу {item} x{amount} по цене {price}. Сумма: {sum}.'

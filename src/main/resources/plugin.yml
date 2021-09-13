@@ -1,0 +1,9 @@
+name: Market
+version: '${project.version}'
+main: org.clusterstorm.mc.market.Market
+api-version: 1.16
+softdepend: [ Vault ]
+authors: [ ClusterStorm ]
+description: Secure exchange between players
+commands:
+  market: {}
