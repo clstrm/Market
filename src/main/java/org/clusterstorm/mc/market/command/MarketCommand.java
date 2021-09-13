@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.clusterstorm.mc.market.Config;
 import org.clusterstorm.mc.market.Market;
 import org.clusterstorm.mc.market.Message;
+import org.clusterstorm.mc.market.core.OrderType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,62 @@ public class MarketCommand extends AbstractCommand {
         if(args.length == 0) {
             Message.usage.send(sender);
             return;
+        }
+
+        if(args[0].equalsIgnoreCase("remove")) {
+            if(!(sender instanceof Player)) return;
+
+            Player player = (Player) sender;
+            if(args.length < 2) {
+                sender.sendMessage("Remove order: /market remove <id>");
+                return;
+            }
+
+            int id;
+            try {
+                id = Integer.parseInt(args[1]);
+            } catch (Exception e) {
+                Message.noOrder.replace("{id}", args[1]).send(player);
+                return;
+            }
+
+            Market.getCore().removeOrder(player.getName(), id, (order) -> {
+                if(order == null) {
+                    Message.noOrder.replace("{id}", args[1]).send(player);
+                    return;
+                }
+
+                int itemAmount;
+                double sum;
+
+                if(order.getType() == OrderType.SELL) {
+                    itemAmount = order.getRemain();
+                    sum = order.getClosed() * order.getPrice();
+                } else {
+                    itemAmount = order.getClosed();
+                    sum = order.getRemain() * order.getPrice();
+                }
+
+                String itemName = giveItem(player, order.toItemStack(), itemAmount);
+
+                // Give money
+
+                boolean sell = order.getType() == OrderType.SELL;
+                Message message = sell ? Message.sellOrderRemoved : Message.buyOrderRemoved;
+
+                message
+                    .replace("{id}", String.valueOf(order.getId()))
+                    .replace("{item}", itemName)
+                    .replace("{amount}", String.valueOf(order.getAmount()))
+                    .replace("{price}", String.valueOf(order.getPrice()))
+                    .replace("{percent}", String.valueOf(order.getClosedPercent()))
+                    .replace("{sum}", String.valueOf(order.getTotalSum()))
+                    .replace("{money}", String.valueOf(sum))
+                    .replace("{closed}", String.valueOf(order.getClosed()))
+                    .send(sender);
+            });
+
+           return;
         }
 
         if(args[0].equalsIgnoreCase("sell")) {
@@ -52,7 +109,7 @@ public class MarketCommand extends AbstractCommand {
 
             String itemName = Config.getItemName(item);
 
-            // CREATE SELL ORDER
+            Market.getCore().sell(player.getName(), item, price);
 
             int amount = item.getAmount();
             item.setAmount(0);
@@ -63,28 +120,6 @@ public class MarketCommand extends AbstractCommand {
                     .replace("{item}", itemName)
                     .replace("{amount}", String.valueOf(amount))
                     .replace("{price}", String.valueOf(price)).send(sender);
-
-            return;
-        }
-
-        if(args[0].equalsIgnoreCase("remove")) {
-            if(!(sender instanceof Player)) return;
-
-            Player player = (Player) sender;
-            if(args.length < 2) {
-                sender.sendMessage("Remove order: /market remove <id>");
-                return;
-            }
-            
-            int id;
-            try {
-                id = Integer.parseInt(args[1]);
-            } catch (Exception e) {
-                Message.noOrder.replace("{id}", args[1]).send(player);
-                return;
-            }
-
-            // REMOVE ORDER
 
             return;
         }
